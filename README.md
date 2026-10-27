@@ -3,7 +3,7 @@
 Este repositorio contiene el código fuente del Backend (Nivel 0 - Sprint 1) para el Sistema de Gestión Hotelera (PMS) del Hotel Costanera. Su objetivo principal es centralizar la gestión de reservas, evitar el overbooking, administrar el estado de las habitaciones y procesar pagos mediante una API RESTful segura.
 
 ## ⚙️ Stack Tecnológico
-* **Lenguaje:** Java 17+ (o superior)
+* **Lenguaje:** Java 21+ (o superior)
 * **Framework Core:** Spring Boot 3.x
 * **Seguridad:** Spring Security, JWT (JSON Web Tokens) y encriptación BCrypt
 * **Persistencia:** Spring Data JPA / Hibernate
