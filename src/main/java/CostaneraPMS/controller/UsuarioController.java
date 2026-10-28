@@ -61,7 +61,12 @@ public class UsuarioController {
         return usuarioRepository.findByEstado(estado);
     }
 
-    
+    @GetMapping("/rol/{idRol}")
+    public List<Usuario> buscarPorRol(
+            @PathVariable Long idRol) {
+
+        return usuarioRepository.findByRol_IdRol(idRol);
+    }
 
     @PutMapping("/{id}")
     public Usuario actualizarUsuario(

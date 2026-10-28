@@ -13,4 +13,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>
     Optional<Usuario> findByDniusuario(String dniusuario);
     List<Usuario> findByNombreusuarioContainingIgnoreCase(String nombre);
     List<Usuario> findByEstado(String estado);
+    List<Usuario> findByRol_IdRol(Long idRol);
 }
