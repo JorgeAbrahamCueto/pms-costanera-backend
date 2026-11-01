@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,9 @@ import CostaneraPMS.dto.FactilizaResponseDTO;
 @RequestMapping("/proveedores")
 @CrossOrigin(origins = "http://localhost:4200")
 public class ProveedorController {
+
+     @Value("${factiliza.token}")
+     private String factilizaToken;
 
     private final ProveedorRepository proveedorRepository;
 
@@ -41,13 +45,14 @@ public class ProveedorController {
     public SunatProveedorDTO consultarSunat(
             @PathVariable String ruc) {
 
-        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjczMCJ9.PGKhltQltSSrQEBjEsJVBK8IsLBuBPkhpYf7LhwMgvg";
         String url = "https://api.factiliza.com/v1/ruc/info/" + ruc;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
+
+        headers.setBearerAuth(factilizaToken);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
+
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<FactilizaResponseDTO> response = restTemplate.exchange(
@@ -57,6 +62,7 @@ public class ProveedorController {
                 FactilizaResponseDTO.class);
 
         FactilizaResponseDTO factiliza = response.getBody();
+
         SunatProveedorDTO dto = new SunatProveedorDTO();
 
         dto.setRuc(
