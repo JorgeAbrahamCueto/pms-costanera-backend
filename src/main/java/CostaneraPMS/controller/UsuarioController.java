@@ -19,140 +19,151 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RequestMapping("/usuarios")
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController {
 
-    private final UsuarioRepository usuarioRepository;
+        private final UsuarioRepository usuarioRepository;
+        private final PasswordEncoder passwordEncoder;
 
-    public UsuarioController(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
-    }
+        public UsuarioController(
+                        UsuarioRepository usuarioRepository,
+                        PasswordEncoder passwordEncoder) {
 
-    @GetMapping
-    public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findAll();
-    }
+                this.usuarioRepository = usuarioRepository;
+                this.passwordEncoder = passwordEncoder;
 
-    @GetMapping("/{id}")
-    public Optional<Usuario> obtenerUsuario(@PathVariable Long id) {
-        return usuarioRepository.findById(id);
-    }
-
-    @GetMapping("/dni/{dni}")
-    public Optional<Usuario> buscarPorDni(
-            @PathVariable String dni) {
-
-        return usuarioRepository.findByDniusuario(dni);
-    }
-
-    @GetMapping("/buscar/{nombre}")
-    public List<Usuario> buscarPorNombre(
-            @PathVariable String nombre) {
-
-        return usuarioRepository
-                .findByNombreusuarioContainingIgnoreCase(nombre);
-    }
-
-    @GetMapping("/estado/{estado}")
-    public List<Usuario> filtrarPorEstado(
-            @PathVariable String estado) {
-
-        return usuarioRepository.findByEstado(estado);
-    }
-
-    @GetMapping("/rol/{idRol}")
-    public List<Usuario> buscarPorRol(
-            @PathVariable Long idRol) {
-
-        return usuarioRepository.findByRol_IdRol(idRol);
-    }
-
-    @PutMapping("/{id}")
-    public Usuario actualizarUsuario(
-            @PathVariable Long id,
-            @RequestBody Usuario usuarioActualizado) {
-
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow();
-
-        if (!usuario.getUsernameusuario().equals(
-                usuarioActualizado.getUsernameusuario())
-                &&
-                usuarioRepository.existsByUsernameusuario(
-                        usuarioActualizado.getUsernameusuario())) {
-
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "El nombre de usuario ya está en uso");
         }
 
-        usuario.setNombreusuario(
-                usuarioActualizado.getNombreusuario());
-
-        usuario.setApellidousuario(
-                usuarioActualizado.getApellidousuario());
-
-        usuario.setDniusuario(
-                usuarioActualizado.getDniusuario());
-
-        usuario.setCorreousuario(
-                usuarioActualizado.getCorreousuario());
-
-        usuario.setUsernameusuario(
-                usuarioActualizado.getUsernameusuario());
-
-        usuario.setPasswordHash(
-                usuarioActualizado.getPasswordHash());
-
-        usuario.setRol(
-                usuarioActualizado.getRol());
-
-        usuario.setFechaActualizacion(
-                LocalDateTime.now());
-
-        return usuarioRepository.save(usuario);
-    }
-
-    @PostMapping
-    public ResponseEntity<String> registrarUsuario(@RequestBody Usuario usuario) {
-        if (usuarioRepository.existsByUsernameusuario(usuario.getUsernameusuario())) {
-            return ResponseEntity.badRequest().body("El nombre de usuario ya está en uso.");
+        @GetMapping
+        public List<Usuario> listarUsuarios() {
+                return usuarioRepository.findAll();
         }
-        usuario.setEstado("ACTIVO");
-        usuario.setIntentosFallidos(0);
-        usuario.setFechaCreacion(LocalDateTime.now());
-        usuario.setFechaActualizacion(LocalDateTime.now());
 
-        usuarioRepository.save(usuario);
+        @GetMapping("/{id}")
+        public Optional<Usuario> obtenerUsuario(@PathVariable Long id) {
+                return usuarioRepository.findById(id);
+        }
 
-        return ResponseEntity.ok().body("Usuario registrado exitosamente.");
-    }
+        @GetMapping("/dni/{dni}")
+        public Optional<Usuario> buscarPorDni(
+                        @PathVariable String dni) {
 
-    @PatchMapping("/{id}/desactivar")
-    public Usuario desactivarUsuario(@PathVariable Long id) {
+                return usuarioRepository.findByDniusuario(dni);
+        }
 
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow();
+        @GetMapping("/buscar/{nombre}")
+        public List<Usuario> buscarPorNombre(
+                        @PathVariable String nombre) {
 
-        usuario.setEstado("INACTIVO");
-        usuario.setFechaActualizacion(LocalDateTime.now());
+                return usuarioRepository
+                                .findByNombreusuarioContainingIgnoreCase(nombre);
+        }
 
-        return usuarioRepository.save(usuario);
-    }
+        @GetMapping("/estado/{estado}")
+        public List<Usuario> filtrarPorEstado(
+                        @PathVariable String estado) {
 
-    @PatchMapping("/{id}/activar")
-    public Usuario activarUsuario(@PathVariable Long id) {
+                return usuarioRepository.findByEstado(estado);
+        }
 
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow();
+        @GetMapping("/rol/{idRol}")
+        public List<Usuario> buscarPorRol(
+                        @PathVariable Long idRol) {
 
-        usuario.setEstado("ACTIVO");
-        usuario.setFechaActualizacion(LocalDateTime.now());
+                return usuarioRepository.findByRol_IdRol(idRol);
+        }
 
-        return usuarioRepository.save(usuario);
-    }
+        @PutMapping("/{id}")
+        public Usuario actualizarUsuario(
+                        @PathVariable Long id,
+                        @RequestBody Usuario usuarioActualizado) {
+
+                Usuario usuario = usuarioRepository.findById(id)
+                                .orElseThrow();
+
+                if (!usuario.getUsernameusuario().equals(
+                                usuarioActualizado.getUsernameusuario())
+                                &&
+                                usuarioRepository.existsByUsernameusuario(
+                                                usuarioActualizado.getUsernameusuario())) {
+
+                        throw new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "El nombre de usuario ya está en uso");
+                }
+
+                usuario.setNombreusuario(
+                                usuarioActualizado.getNombreusuario());
+
+                usuario.setApellidousuario(
+                                usuarioActualizado.getApellidousuario());
+
+                usuario.setDniusuario(
+                                usuarioActualizado.getDniusuario());
+
+                usuario.setCorreousuario(
+                                usuarioActualizado.getCorreousuario());
+
+                usuario.setUsernameusuario(
+                                usuarioActualizado.getUsernameusuario());
+
+                usuario.setPasswordHash(
+                                usuarioActualizado.getPasswordHash());
+
+                usuario.setRol(
+                                usuarioActualizado.getRol());
+
+                usuario.setFechaActualizacion(
+                                LocalDateTime.now());
+
+                return usuarioRepository.save(usuario);
+        }
+
+        @PostMapping
+        public ResponseEntity<String> registrarUsuario(@RequestBody Usuario usuario) {
+                if (usuarioRepository.existsByUsernameusuario(usuario.getUsernameusuario())) {
+                        return ResponseEntity.badRequest().body("El nombre de usuario ya está en uso.");
+                }
+                usuario.setEstado("ACTIVO");
+                usuario.setIntentosFallidos(0);
+                usuario.setFechaCreacion(LocalDateTime.now());
+                usuario.setFechaActualizacion(LocalDateTime.now());
+
+                usuario.setPasswordHash(
+                                passwordEncoder.encode(
+                                                usuario.getPasswordHash()));
+
+                usuarioRepository.save(usuario);
+
+                return ResponseEntity.ok().body("Usuario registrado exitosamente.");
+        }
+
+        @PatchMapping("/{id}/desactivar")
+        public Usuario desactivarUsuario(@PathVariable Long id) {
+
+                Usuario usuario = usuarioRepository.findById(id)
+                                .orElseThrow();
+
+                usuario.setEstado("INACTIVO");
+                usuario.setFechaActualizacion(LocalDateTime.now());
+
+                return usuarioRepository.save(usuario);
+        }
+
+        @PatchMapping("/{id}/activar")
+        public Usuario activarUsuario(@PathVariable Long id) {
+
+                Usuario usuario = usuarioRepository.findById(id)
+                                .orElseThrow();
+
+                usuario.setEstado("ACTIVO");
+                usuario.setFechaActualizacion(LocalDateTime.now());
+
+                return usuarioRepository.save(usuario);
+        }
 
 }
