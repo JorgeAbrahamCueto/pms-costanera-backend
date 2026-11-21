@@ -4,6 +4,8 @@ import CostaneraPMS.dto.LoginRequestDTO;
 import CostaneraPMS.dto.LoginResponseDTO;
 import CostaneraPMS.model.Usuario;
 import CostaneraPMS.repository.UsuarioRepository;
+import CostaneraPMS.security.JwtUtil;
+
 import java.util.Optional;
 
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +18,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AuthController {
         private final UsuarioRepository usuarioRepository;
         private final PasswordEncoder passwordEncoder;
+        private final JwtUtil jwtUtil;
 
         public AuthController(
                         UsuarioRepository usuarioRepository,
-                        PasswordEncoder passwordEncoder) {
+                        PasswordEncoder passwordEncoder,
+                        JwtUtil jwtUtil) {
 
                 this.usuarioRepository = usuarioRepository;
                 this.passwordEncoder = passwordEncoder;
+                this.jwtUtil = jwtUtil;
 
         }
 
@@ -37,6 +42,16 @@ public class AuthController {
                         response.setMensaje(
                                         "Usuario y/o Contraseña Inválidos");
                         return response;
+                }
+                if (usuario.get()
+                                .getEstado()
+                                .equals("BLOQUEADO")) {
+
+                        response.setMensaje(
+                                        "Usuario bloqueado");
+
+                        return response;
+
                 }
                 if (!passwordEncoder.matches(
                                 request.getPassword(),
@@ -57,6 +72,7 @@ public class AuthController {
 
                         response.setMensaje(
                                         "Usuario y/o Contraseña Inválidos");
+                        return response;
                 }
                 usuario.get().setIntentosFallidos(0);
 
@@ -68,6 +84,12 @@ public class AuthController {
                                 usuario.get()
                                                 .getRol()
                                                 .getNombreRol());
+
+                String token = jwtUtil.generarToken(
+                                usuario.get().getUsernameusuario(),
+                                usuario.get().getRol().getNombreRol());
+
+                response.setToken(token);
                 return response;
         }
 }
