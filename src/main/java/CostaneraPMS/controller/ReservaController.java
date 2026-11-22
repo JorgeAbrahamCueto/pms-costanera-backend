@@ -33,6 +33,17 @@ public class ReservaController {
     public Reserva registrarReserva(
             @RequestBody Reserva reserva) {
 
+        List<Reserva> reservasExistentes = reservaRepository
+                .findByHabitacionAndFechaHoraCheckinProgramadoLessThanAndFechaHoraCheckoutProgramadoGreaterThan(
+                        reserva.getHabitacion(),
+                        reserva.getFechaHoraCheckoutProgramado(),
+                        reserva.getFechaHoraCheckinProgramado());
+
+        if (!reservasExistentes.isEmpty()) {
+            throw new RuntimeException(
+                    "La habitación no está disponible para las fechas seleccionadas");
+        }
+
         reserva.setFechaReserva(
                 LocalDateTime.now());
 
