@@ -22,9 +22,7 @@ public class HabitacionController {
 
     @GetMapping
     public List<Habitacion> listarHabitaciones() {
-
         return habitacionRepository.findAll();
-
     }
 
 }
