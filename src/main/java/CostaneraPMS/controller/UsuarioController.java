@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -124,10 +125,19 @@ public class UsuarioController {
         }
 
         @PostMapping
-        public ResponseEntity<String> registrarUsuario(@RequestBody Usuario usuario) {
-                if (usuarioRepository.existsByUsernameusuario(usuario.getUsernameusuario())) {
-                        return ResponseEntity.badRequest().body("El nombre de usuario ya está en uso.");
+        public ResponseEntity<?> registrarUsuario(
+                        @RequestBody Usuario usuario) {
+
+                if (usuarioRepository.existsByUsernameusuario(
+                                usuario.getUsernameusuario())) {
+
+                        return ResponseEntity
+                                        .badRequest()
+                                        .body(Map.of(
+                                                        "mensaje",
+                                                        "El nombre de usuario ya está en uso."));
                 }
+
                 usuario.setEstado("ACTIVO");
                 usuario.setIntentosFallidos(0);
                 usuario.setFechaCreacion(LocalDateTime.now());
@@ -139,7 +149,10 @@ public class UsuarioController {
 
                 usuarioRepository.save(usuario);
 
-                return ResponseEntity.ok().body("Usuario registrado exitosamente.");
+                return ResponseEntity.ok(
+                                Map.of(
+                                                "mensaje",
+                                                "Usuario registrado exitosamente."));
         }
 
         @PatchMapping("/{id}/desactivar")
