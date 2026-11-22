@@ -6,6 +6,7 @@ import CostaneraPMS.repository.ReservaRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/reservas")
@@ -26,6 +27,17 @@ public class ReservaController {
 
         return reservaRepository.findAll();
 
+    }
+
+    @PostMapping
+    public Reserva registrarReserva(
+            @RequestBody Reserva reserva) {
+
+        reserva.setFechaReserva(
+                LocalDateTime.now());
+
+        return reservaRepository.save(
+                reserva);
     }
 
 }
