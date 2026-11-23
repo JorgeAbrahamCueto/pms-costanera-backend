@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import CostaneraPMS.model.EstadoHabitacion;
 
 import java.util.List;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.math.BigDecimal;
+
 
 @RestController
 @RequestMapping("/reservas")
@@ -56,6 +59,8 @@ public class ReservaController {
         reserva.setFechaReserva(
                 LocalDateTime.now());
 
+        reserva.setTarifaNoche(
+        new BigDecimal("120.00"));
         return reservaRepository.save(
                 reserva);
     }
